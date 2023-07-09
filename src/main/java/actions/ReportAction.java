@@ -104,7 +104,7 @@ public void create() throws ServletException, IOException {
         //セッションからログイン中の従業員情報を取得
         EmployeeView ev = (EmployeeView) getSessionScope(AttributeConst.LOGIN_EMP);
 
-        //パラメータの値をもとに日報情報のインスタンスを作成する
+      //パラメータの値をもとに日報情報のインスタンスを作成する
         ReportView rv = new ReportView(
                 null,
                 ev, //ログインしている従業員を、日報作成者として登録する
@@ -112,9 +112,9 @@ public void create() throws ServletException, IOException {
                 getRequestParam(AttributeConst.REP_TITLE),
                 getRequestParam(AttributeConst.REP_CONTENT),
                 null,
-                null);
-
-        //日報情報登録
+                null,
+                0);
+      //日報情報登録
         List<String> errors = service.create(rv);
 
         if (errors.size() > 0) {
@@ -122,7 +122,7 @@ public void create() throws ServletException, IOException {
 
             putRequestScope(AttributeConst.TOKEN, getTokenId()); //CSRF対策用トークン
             putRequestScope(AttributeConst.REPORT, rv);//入力された日報情報
-            putRequestScope(AttributeConst.ERR, errors);//エラーのリスト
+            putRequestScope(AttributeConst.ERR, (List<ReportView>) null);//エラーのリスト
 
             //新規登録画面を再表示
             forward(ForwardConst.FW_REP_NEW);
@@ -135,9 +135,9 @@ public void create() throws ServletException, IOException {
 
             //一覧画面にリダイレクト
             redirect(ForwardConst.ACT_REP, ForwardConst.CMD_INDEX);
-        }
+        }}
     }
-}
+
 /**
  * 詳細画面を表示する
  * @throws ServletException
@@ -229,6 +229,23 @@ public void update() throws ServletException, IOException {
 
         }
     }
+}
+/**
+ * いいねする
+ * @throws ServletException
+ * @throws IOException
+ */
+public void likeCount() throws ServletException, IOException {
+    //idを条件に日報データを取得する
+    ReportView rv = service.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
+    //いいね数を１加算し、設定する
+    rv.setLikeCount(rv.getLikeCount() + 1);
+    //日報データを更新する
+    service.update(rv);
+    //セッションに更新完了のフラッシュメッセージを設定
+    putSessionScope(AttributeConst.FLUSH, MessageConst.I_LIKE_COUNT.getMessage());
+    //一覧画面にリダイレクト
+    redirect(ForwardConst.ACT_REP, ForwardConst.CMD_INDEX);
 }
 
 }

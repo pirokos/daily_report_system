@@ -24,20 +24,13 @@ public class ReportConverter {
                 rv.getTitle(),
                 rv.getContent(),
                 rv.getCreatedAt(),
-                rv.getUpdatedAt());
+                rv.getUpdatedAt(),
+                rv.getLikeCount());
     }
-
-    /**
-     * DTOモデルのインスタンスからViewモデルのインスタンスを作成する
-     * @param r Reportのインスタンス
-     * @return ReportViewのインスタンス
-     */
     public static ReportView toView(Report r) {
-
         if (r == null) {
             return null;
         }
-
         return new ReportView(
                 r.getId(),
                 EmployeeConverter.toView(r.getEmployee()),
@@ -45,8 +38,20 @@ public class ReportConverter {
                 r.getTitle(),
                 r.getContent(),
                 r.getCreatedAt(),
-                r.getUpdatedAt());
+                r.getUpdatedAt(),
+                r.getLikeCount());
     }
+    public static void copyViewToModel1(Report r, ReportView rv) {
+        r.setId(rv.getId());
+        r.setEmployee(EmployeeConverter.toModel(rv.getEmployee()));
+        r.setReportDate(rv.getReportDate());
+        r.setTitle(rv.getTitle());
+        r.setContent(rv.getContent());
+        r.setCreatedAt(rv.getCreatedAt());
+        r.setUpdatedAt(rv.getUpdatedAt());
+        r.setLikeCount(rv.getLikeCount());
+    }
+
 
     /**
      * DTOモデルのリストからViewモデルのリストを作成する
@@ -76,7 +81,7 @@ public class ReportConverter {
         r.setContent(rv.getContent());
         r.setCreatedAt(rv.getCreatedAt());
         r.setUpdatedAt(rv.getUpdatedAt());
-
+        r.setLikeCount(rv.getLikeCount());
     }
 
 }
